@@ -32,6 +32,19 @@ IPAddress ip(192,168,0,120);
 IPAddress gateway(192,168,0,1);
 IPAddress subnet(255,255,255,0);
 
+String getCustomRewardId(IRCMessage ircMessage){
+  int keyIndex = ircMessage.original.indexOf("custom-reward-id");
+  if(keyIndex == -1)
+  {
+    return "";
+  }
+
+  int valueStartIndex = ircMessage.original.indexOf("=", keyIndex) + 1;
+  int valueEndIndex = ircMessage.original.indexOf(";", valueStartIndex) - 1;
+
+  return ircMessage.original.substring(valueStartIndex, valueEndIndex);
+}
+
 //funcoes LEDS
 void fadeColor(int ColorChannel){
 // increase the LED brightness
@@ -104,6 +117,11 @@ void callback(IRCMessage ircMessage) {
 
     //prints chat to serial
     Serial.println(message);
+
+    String customReward = getCustomRewardId(ircMessage);
+    if(customReward.length() > 0) {
+      Serial.println("custom reward: " + customReward);
+    }
 
 //this is where you would replace these elements to match your streaming configureation. 
 if (ircMessage.text.indexOf("HYDRABOT") > -1 && ircMessage.nick == "julialabs")
